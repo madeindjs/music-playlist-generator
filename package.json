@@ -1,0 +1,43 @@
+{
+  "name": "music-playlist-generator",
+  "version": "1.0.0",
+  "description": "Generate M3u playlists from your local library using the hashtags contained in the comment section in music's metadata",
+  "keywords": [
+    "id3",
+    "m3u",
+    "playlist",
+    "cli",
+    "music",
+    "metadata",
+    "audio",
+    "tags"
+  ],
+  "homepage": "https://github.com/madeindjs/music-playlist-generator",
+  "bugs": {
+    "url": "https://github.com/madeindjs/music-playlist-generator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madeindjs/music-playlist-generator.git"
+  },
+  "license": "ISC",
+  "author": {
+    "name": "Alexandre Rousseau",
+    "email": "alexandre@rsseau.fr",
+    "url": "https://rsseau.fr"
+  },
+  "type": "module",
+  "main": "lib.mjs",
+  "bin": {
+    "music-playlist-generator": "cli.mjs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "music-metadata-search": "^2.5.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
