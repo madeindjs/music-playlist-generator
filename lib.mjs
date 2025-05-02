@@ -7,16 +7,18 @@ import { search } from "music-metadata-search";
  * @param {string} path
  */
 export async function findExistingTags(path) {
-  const tracks = await search(path, { where: "comment IS NOT NULL" });
-  const comments = new Set(tracks.map((t) => t.comment).filter(Boolean));
+  const tracks = await search(path, {
+    where: "comment IS NOT NULL OR genre IS NOT NULL",
+  });
+  const comments = new Set(
+    tracks.flatMap((t) => [t.comment, t.genre]).filter(Boolean),
+  );
 
   const tagRegex = /#(([A-z]+-?)+)/g;
   const tags = new Set();
   for (const c of comments) {
-    if (c === null) continue;
     for (const match of c.matchAll(tagRegex)) tags.add(match[0]);
   }
-
   return tags;
 }
 
@@ -51,7 +53,12 @@ export async function generatePlaylists(path) {
   const tags = await findExistingTags(path);
 
   for (const tag of tags) {
-    const tracks = await search(path, { comment: tag });
+    const [tracksComments, tracksGenre] = await Promise.all([
+      search(path, { comment: tag }),
+      search(path, { genre: tag }),
+    ]);
+
+    const tracks = [...tracksComments, ...tracksGenre];
 
     const playlist = generateM3uPlaylist(tracks, tag, path);
     const playlistPath = join(path, `${tag}.m3u`);

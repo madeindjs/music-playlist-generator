@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/music-playlist-generator.svg)](https://badge.fury.io/js/music-playlist-generator)
 
-Generate M3u playlists from your local library using the hashtags contained in the comment section in music's metadata.
+Generate M3u playlists from your local library using the hashtags contained in the comment section or in the genre in music's metadata.
 
 This script relies on my library [`music-metadata-search`](https://www.npmjs.com/package/music-metadata-search). It'll scan all audio files and extract their metadata (ID3v1, ID3v2, APE, Vorbis, and iTunes/MP4 tags). Then it gets the hashtags, and creates playlists for all of them.
 

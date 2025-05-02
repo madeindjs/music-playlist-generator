@@ -1,7 +1,7 @@
 {
   "name": "music-playlist-generator",
-  "version": "1.0.0",
-  "description": "Generate M3u playlists from your local library using the hashtags contained in the comment section in music's metadata",
+  "version": "2.0.0",
+  "description": "Generate M3u playlists from your local library using the hashtags contained in the comment or in the genre section in music's metadata",
   "keywords": [
     "id3",
     "m3u",
@@ -35,7 +35,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "music-metadata-search": "^2.5.1"
+    "music-metadata-search": "^2.6.0"
   },
   "engines": {
     "node": ">=20.0.0"
