@@ -3,27 +3,10 @@ import fs from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import { search } from "music-metadata-search";
 
-/**
- * @param {string} path
- */
-export async function findExistingTags(path) {
-  const tracks = await search(path, {
-    where: "comment IS NOT NULL OR genre IS NOT NULL",
-  });
-  const comments = new Set(
-    tracks.flatMap((t) => [t.comment, t.genre]).filter(Boolean),
-  );
-
-  const tagRegex = /#(([A-z]+-?)+)/g;
-  const tags = new Set();
-  for (const c of comments) {
-    for (const match of c.matchAll(tagRegex)) tags.add(match[0]);
-  }
-  return tags;
-}
+const tagRegex = /#(([A-z]+-?)+)/g;
 
 /**
- * @param {Awaited<ReturnType<typeof search>>} tracks
+ * @param {import('music-metadata-search').Track[]} tracks
  * @param {string} path
  */
 function generateM3uPlaylist(tracks, title = "Playlist", path) {
@@ -35,32 +18,34 @@ function generateM3uPlaylist(tracks, title = "Playlist", path) {
   return rows.join("\n");
 }
 
-/**
- * @param {string} path
- */
+/** @param {string} path */
 export async function removePlaylists(path) {
   for await (const oldPlaylist of fs.glob(join(path, "#*.m3u"))) {
     await fs.unlink(oldPlaylist);
   }
 }
 
-/**
- * @param {string} path
- */
+/** @param {string} path */
 export async function generatePlaylists(path) {
-  const tags = await findExistingTags(path);
+  const tracks = search(path, {});
 
-  for (const tag of tags) {
-    const [tracksComments, tracksGenre] = await Promise.all([
-      search(path, { comment: tag }),
-      search(path, { genre: tag }),
-    ]);
+  /** @type {Record<string, import('music-metadata-search').Track[]>} */
+  const playlists = {};
 
-    const tracks = [...tracksComments, ...tracksGenre];
+  for await (const t of tracks) {
+    for (const c of [t.comment, t.genre].filter(Boolean)) {
+      if (!c) continue;
+      for (const match of c.matchAll(tagRegex)) {
+        const tag = match[0];
+        playlists[tag] ??= [];
+        playlists[tag].push(t);
+      }
+    }
+  }
 
+  for (const [tag, tracks] of Object.entries(playlists)) {
     const playlist = generateM3uPlaylist(tracks, tag, path);
     const playlistPath = join(path, `${tag}.m3u`);
-
     await fs.writeFile(playlistPath, playlist, { encoding: "utf-8" });
   }
 }
