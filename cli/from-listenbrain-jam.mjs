@@ -22,10 +22,22 @@ const tracks = await getPlaylistTracks(playlistId);
 const localTracks = [];
 for await (const track of search(path, {})) {
   if (!track.musicbrainzRecordingId) continue;
-  const index = tracks.indexOf(track.musicbrainzRecordingId);
+  const index = tracks.findIndex(
+    (t) => t.recordId === track.musicbrainzRecordingId,
+  );
   if (index === -1) continue;
   localTracks[index] = track;
 }
+
+for (let i = 0; i < tracks.length; i++) {
+  if (localTracks[i] === undefined) {
+    const track = tracks[i];
+    console.warn(
+      `Cannot find ${track.author} - ${track.title} (${track.recordId})`,
+    );
+  }
+}
+
 const m3u = generateM3uPlaylist(
   localTracks.filter(Boolean),
   weeklyJam.title,
