@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // @ts-check
-import { search } from "music-metadata-search";
 import { join } from "node:path";
 import { writeFile } from "node:fs/promises";
 import { generateM3uPlaylist } from "../lib/m3u.mjs";
-import { getWeeklyJam, getPlaylistTracks } from "../lib/listenbrain.mjs";
+import {
+  getWeeklyJam,
+  searchTracksFromListenBrainzPlaylist,
+} from "../lib/listenbrain.mjs";
 
 const path = process.argv.at(2);
 
@@ -18,25 +20,11 @@ const playlistId = weeklyJam.identifier.replace(
   "https://listenbrainz.org/playlist/",
   "",
 );
-const tracks = await getPlaylistTracks(playlistId);
-const localTracks = [];
-for await (const track of search(path, {})) {
-  if (!track.musicbrainzRecordingId) continue;
-  const index = tracks.findIndex(
-    (t) => t.recordId === track.musicbrainzRecordingId,
-  );
-  if (index === -1) continue;
-  localTracks[index] = track;
-}
 
-for (let i = 0; i < tracks.length; i++) {
-  if (localTracks[i] === undefined) {
-    const track = tracks[i];
-    console.warn(
-      `Cannot find ${track.author} - ${track.title} (${track.recordId})`,
-    );
-  }
-}
+const localTracks = await searchTracksFromListenBrainzPlaylist(
+  path,
+  playlistId,
+);
 
 const m3u = generateM3uPlaylist(
   localTracks.filter(Boolean),
