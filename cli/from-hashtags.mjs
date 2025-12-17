@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // @ts-check
-import { generatePlaylists, removePlaylists } from "./lib.mjs";
+import { generatePlaylists, removePlaylists } from "../lib.mjs";
 
 const path = process.argv.at(2);
 

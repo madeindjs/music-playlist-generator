@@ -1,6 +1,6 @@
 {
   "name": "music-playlist-generator",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Generate M3u playlists from your local library using the hashtags contained in the comment or in the genre section in music's metadata",
   "keywords": [
     "id3",
@@ -29,7 +29,8 @@
   "type": "module",
   "main": "lib.mjs",
   "bin": {
-    "music-playlist-generator": "cli.mjs"
+    "music-playlist-generator-from-hashtags": "cli/from-hashtags.mjs",
+    "music-playlist-generator-from-listenbrainz-jam": "cli/from-listenbrain-jam.mjs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

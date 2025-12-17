@@ -9,7 +9,7 @@ const tagRegex = /#(([A-z]+-?)+)/g;
  * @param {import('music-metadata-search').Track[]} tracks
  * @param {string} path
  */
-function generateM3uPlaylist(tracks, title = "Playlist", path) {
+export function generateM3uPlaylist(tracks, title = "Playlist", path) {
   const rows = ["#EXTM3U", `#PLAYLIST:${title}`, ""];
   for (const track of tracks) {
     const trackPath = `.${sep}${relative(path, track.path)}`;
